@@ -8,4 +8,4 @@ Our API is fully documented using Swagger. You can view and interact with our AP
 
 ### [View API Documentation](https://brendanmuldoon.github.io/ocula-weather-api/)
 
-![Swagger UI](favicon-32x32.png)
+![Swagger UI](https://github.com/brendanmuldoon/ocula-weather-api/tree/docs/swagger-ui/favicon-32x32.png)
