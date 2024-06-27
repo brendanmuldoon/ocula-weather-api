@@ -1,9 +1,8 @@
-# main.py
-
 from fastapi import FastAPI
+
+from main.controller import weather_controller
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.include_router(weather_controller.router)
+
