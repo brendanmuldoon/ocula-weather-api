@@ -1,19 +1,14 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends
+
 from main.entity.weather_request import WeatherRequest
 from main.entity.weather_response import WeatherResponse
-
+from main.service.weather_service import WeatherService
 
 router = APIRouter()
 
 
-@router.post("/weather")
-def create_weather_data(request: WeatherRequest):
+@router.post("/weather", response_model=WeatherResponse)
+def post_weather_data(request: WeatherRequest, service: WeatherService = Depends(WeatherService)):
     print(f"{request.city}_{request.date}")
-    return WeatherResponse(date=request.date,
-                           city=request.city,
-                           min_temp="1",
-                           max_temp="1",
-                           avg_temp="1",
-                           humidity="10%",
-                           http_code="200",
-                           error_message="")
+    return service.get_weather(request)
+
