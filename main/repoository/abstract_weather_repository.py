@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from main.entity.weather_request import WeatherRequest
+from main.entity.weather_response import WeatherResponse
 
 
 class AbstractWeatherRepository(ABC):
 
     @abstractmethod
-    def post_weather_data(self, request: WeatherRequest):
+    def store_weather_data(self, data: WeatherResponse):
         raise NotImplementedError

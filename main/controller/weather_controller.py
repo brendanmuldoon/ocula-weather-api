@@ -9,5 +9,5 @@ router = APIRouter()
 
 @router.post("/weather", response_model=WeatherResponse, response_model_exclude_none=True)
 def post_weather_data(request: WeatherRequest, service: WeatherService = Depends(WeatherService)):
-    return service.get_weather(request)
+    return service.create_weather_data(request)
 
