@@ -1,4 +1,6 @@
 starlette
-pydantic
-fastapi
+pydantic~=2.7.4
+fastapi~=0.111.0
 uvicorn
+requests~=2.32.3
+python-dotenv~=1.0.1

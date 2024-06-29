@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 
-from main.entity.weather_response import WeatherResponse
-
 
 class AbstractWeatherCache(ABC):
 
     @abstractmethod
-    def store(self, data: WeatherResponse):
+    def get(self, key: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set(self, date_key, city_key, value):
         raise NotImplementedError
 
     @abstractmethod
