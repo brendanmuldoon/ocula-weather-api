@@ -34,11 +34,15 @@ def create_cache_value(key, value):
     return cache_value
 
 
-def create_cache_key_date(date):
+def get_date_from_epoch(date):
     utc_dt = datetime.utcfromtimestamp(int(date))
     uk_tz = pytz.timezone('Europe/London')
     uk_dt = utc_dt.astimezone(uk_tz)
     return uk_dt.date()
+
+
+def create_cache_key_date(date):
+    return get_date_from_epoch(date)
 
 
 def create_success_response(open_weather_api_response):
@@ -51,7 +55,7 @@ def create_success_response(open_weather_api_response):
     return SuccessResponse(
         http_code=str(open_weather_api_response["cod"]),
         city=str(open_weather_api_response['name']),
-        date=str(open_weather_api_response['dt']),
+        date=str(get_date_from_epoch(str(open_weather_api_response['dt']))),
         min_temp=str(min_temp_formatted),
         max_temp=str(max_temp_formatted),
         avg_temp=str(avg_temp_formatted),

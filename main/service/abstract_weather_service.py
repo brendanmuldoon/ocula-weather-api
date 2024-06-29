@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 
-from main.entity.success_weather_response import SuccessResponse
 
-
-class AbstractWeatherRepository(ABC):
+class AbstractWeatherService(ABC):
 
     @abstractmethod
-    def store_weather_data(self, data: SuccessResponse):
+    def create_weather_data(self, city: str):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_weather_data(self, date):
         raise NotImplementedError
 
     @abstractmethod

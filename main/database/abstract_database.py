@@ -1,7 +1,12 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class AbstractDatabase(ABC):
 
-    def insert(self):
+    @abstractmethod
+    def insert(self, data):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_all(self):
         raise NotImplementedError
