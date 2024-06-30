@@ -1,9 +1,13 @@
 from logging.config import dictConfig
 import logging
 
+from fastapi import Depends
+
 from main.config.log_config import LogConfig
 from main.cache.abstract_weather_cache import AbstractWeatherCache
-from main.database.sqlite_database_singleton import SQLiteDatabaseSingleton
+from main.database.abstract_database import AbstractDatabase
+from main.database.sqlite_database import SQLiteDatabase
+from main.decorator.cache_error_decorator import handle_cache_db_exceptions
 from main.entity.success_weather_response import SuccessResponse
 from main.utils.weather_constants import LOGGER_NAME
 
@@ -13,14 +17,28 @@ logger = logging.getLogger(LOGGER_NAME)
 
 class WeatherCache(AbstractWeatherCache):
 
-    def __init__(self):
+    def __init__(self, db_singleton: AbstractDatabase = Depends(SQLiteDatabase)):
         self.cache = {}
+        self.db_singleton = db_singleton
 
     def get(self, key: str):
         date_key = key.strip()
         result = self.cache.get(date_key, {})
-        success_responses = []
+        data = self.get_data(result)
+        return data
 
+    def set(self, date_key, city_key, value):
+        if date_key not in self.cache:
+            self.cache[date_key] = {}
+        self.cache[date_key][city_key] = value
+        logger.info("Record inserted into cache")
+
+    def load(self):
+        rows = self.get_database_rows()
+        self.set_rows(rows)
+
+    def get_data(self, result):
+        data = []
         for city, response in result.items():
             sr = SuccessResponse(
                 city=response.city,
@@ -30,21 +48,10 @@ class WeatherCache(AbstractWeatherCache):
                 avg_temp=response.avg_temp,
                 humidity=response.humidity
             )
-            success_responses.append(sr)
+            data.append(sr)
+        return data
 
-        return success_responses
-
-    def set(self, date_key, city_key, value):
-        if date_key not in self.cache:
-            self.cache[date_key] = {}
-        self.cache[date_key][city_key] = value
-        logger.info("Record inserted into cache")
-
-    def load(self):
-        db_singleton = SQLiteDatabaseSingleton()
-        cursor = db_singleton.get_cursor()
-        cursor.execute("SELECT date, city, min_temp, max_temp, avg_temp, humidity FROM weather")
-        rows = cursor.fetchall()
+    def set_rows(self, rows):
         for row in rows:
             date_key = row[0]
             city_key = row[1]
@@ -58,9 +65,8 @@ class WeatherCache(AbstractWeatherCache):
             )
             self.set(date_key, city_key, response)
 
-    def print_cache(self):
-        print("Cache contents --> ")
-        for date_key, cities in self.cache.items():
-            print(f"Date: {date_key}")
-            for city_key, value in cities.items():
-                print(f"  City: {city_key}, Data: {value}")
+    @handle_cache_db_exceptions
+    def get_database_rows(self):
+        cursor = self.db_singleton.get_cursor()
+        cursor.execute("SELECT date, city, min_temp, max_temp, avg_temp, humidity FROM weather")
+        return cursor.fetchall()
