@@ -11,9 +11,10 @@ from main.repoository.abstract_weather_repository import AbstractWeatherReposito
 from main.repoository.weather_repository import WeatherRepository
 from main.service.abstract_weather_service import AbstractWeatherService
 from main.utils import weather_utils
+from main.utils.weather_constants import LOGGER_NAME
 
 dictConfig(LogConfig().model_dump())
-logger = logging.getLogger("weather-api")
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class WeatherService(AbstractWeatherService):

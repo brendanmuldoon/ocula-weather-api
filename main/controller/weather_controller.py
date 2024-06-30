@@ -8,11 +8,12 @@ from starlette.responses import JSONResponse
 from main.entity.final_response import FinalResponse
 from main.service.abstract_weather_service import AbstractWeatherService
 from main.service.weather_service import WeatherService
+from main.utils.weather_constants import LOGGER_NAME
 
 router = APIRouter()
 
 dictConfig(LogConfig().model_dump())
-logger = logging.getLogger("weather-api")
+logger = logging.getLogger(LOGGER_NAME)
 
 
 @router.post("/weather/{city}", response_model=FinalResponse, response_model_exclude_none=True)

@@ -1,12 +1,14 @@
 from logging.config import dictConfig
 import logging
+from multiprocessing.util import LOGGER_NAME
+
 from main.config.log_config import LogConfig
 from main.cache.abstract_weather_cache import AbstractWeatherCache
 from main.database.sqlite_database_singleton import SQLiteDatabaseSingleton
 from main.entity.success_weather_response import SuccessResponse
 
 dictConfig(LogConfig().model_dump())
-logger = logging.getLogger("weather-api")
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class WeatherCache(AbstractWeatherCache):

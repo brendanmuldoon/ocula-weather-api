@@ -8,9 +8,10 @@ from main.database.abstract_database import AbstractDatabase
 from main.database.sqlite_database import SQLiteDatabase
 from main.entity.success_weather_response import SuccessResponse
 from main.repoository.abstract_weather_repository import AbstractWeatherRepository
+from main.utils.weather_constants import LOGGER_NAME
 
 dictConfig(LogConfig().model_dump())
-logger = logging.getLogger("weather-api")
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class WeatherRepository(AbstractWeatherRepository):

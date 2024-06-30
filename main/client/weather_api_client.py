@@ -6,11 +6,12 @@ import requests
 from dotenv import load_dotenv
 
 from main.client.abstract_weather_api_client import AbstractWeatherApiClient
+from main.utils.weather_constants import LOGGER_NAME
 
 load_dotenv()
 
 dictConfig(LogConfig().model_dump())
-logger = logging.getLogger("weather-api")
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class WeatherApiClient(AbstractWeatherApiClient):

@@ -1,4 +1,4 @@
-from typing import Union, TypeVar, Generic, List
+from typing import Union, List
 
 from pydantic import BaseModel
 
