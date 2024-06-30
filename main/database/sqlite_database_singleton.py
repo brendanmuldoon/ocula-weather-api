@@ -15,9 +15,10 @@ class SQLiteDatabaseSingleton:
 
     def _initialize(self):
         # Create an in-memory SQLite database
-        self.connection = sqlite3.connect(':memory:')
+        self.connection = sqlite3.connect(':memory:', check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.create_weather_table()
+        self.load_dummy_data()
 
     def create_weather_table(self):
         create_table_sql = """
@@ -41,7 +42,30 @@ class SQLiteDatabaseSingleton:
     def get_cursor(self):
         return self.cursor
 
-    def close(self):
-        if self.connection:
-            self.connection.close()
-            self.connection = None
+    def load_dummy_data(self):
+        dummy_data = [
+            {'date': '2024-06-29', 'city': 'London', 'min_temp': 15.5, 'max_temp': 25.0, 'avg_temp': 20.25,
+             'humidity': 60},
+            {'date': '2024-06-29', 'city': 'Paris', 'min_temp': 17.0, 'max_temp': 27.0, 'avg_temp': 22.0,
+             'humidity': 55},
+            {'date': '2024-06-30', 'city': 'New York', 'min_temp': 20.0, 'max_temp': 30.0, 'avg_temp': 25.0,
+             'humidity': 70},
+            {'date': '2024-06-30', 'city': 'Tokyo', 'min_temp': 22.0, 'max_temp': 32.0, 'avg_temp': 27.0,
+             'humidity': 65}
+        ]
+
+        insert_sql = """
+        INSERT INTO weather (date, city, min_temp, max_temp, avg_temp, humidity)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """
+
+        for record in dummy_data:
+            try:
+                self.cursor.execute(insert_sql, (
+                    record['date'], record['city'], record['min_temp'], record['max_temp'], record['avg_temp'],
+                    record['humidity']))
+            except sqlite3.IntegrityError:
+                # Handle the case where the record already exists (based on UNIQUE constraint)
+                pass
+
+        self.connection.commit()

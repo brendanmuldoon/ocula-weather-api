@@ -10,3 +10,7 @@ class AbstractDatabase(ABC):
     @abstractmethod
     def get_all(self):
         raise NotImplementedError
+
+    @abstractmethod
+    def get_all_by_date(self, date):
+        raise NotImplementedError

@@ -1,5 +1,7 @@
 from fastapi import Depends
-
+from logging.config import dictConfig
+import logging
+from main.config.log_config import LogConfig
 from main.cache.abstract_weather_cache import AbstractWeatherCache
 from main.cache.weather_cache_singleton import get_weather_cache
 from main.client.abstract_weather_api_client import AbstractWeatherApiClient
@@ -9,6 +11,9 @@ from main.repoository.abstract_weather_repository import AbstractWeatherReposito
 from main.repoository.weather_repository import WeatherRepository
 from main.service.abstract_weather_service import AbstractWeatherService
 from main.utils import weather_utils
+
+dictConfig(LogConfig().model_dump())
+logger = logging.getLogger("weather-api")
 
 
 class WeatherService(AbstractWeatherService):
@@ -22,31 +27,38 @@ class WeatherService(AbstractWeatherService):
         self.weather_cache = weather_cache
 
     def create_weather_data(self, city: str):
+        logger.info("Validating request ...")
         if not weather_utils.valid_weather_request(city):
-            return weather_utils.handle_error_response("Invalid payload", "400")
+            return weather_utils.handle_error_response("Invalid request", "400")
 
         open_weather_api_response = self.weather_api_client.get_weather(city)
 
         if not weather_utils.is_successful_weather_api_client_response(open_weather_api_response):
+            logger.error(str(open_weather_api_response['message']))
             return weather_utils.handle_error_response(str(open_weather_api_response['message']),
                                                        str(open_weather_api_response['cod']))
 
-        response = weather_utils.create_success_response(open_weather_api_response)
+        response = weather_utils.create_dto_object(open_weather_api_response)
 
-        repo_response = self.weather_repo.store_weather_data(response)
+        data = self.weather_repo.store_weather_data(response)
 
-        if self.created_status_code(repo_response):
-            self.store_in_cache(response)
-
-        return FinalResponse(
-            http_code=repo_response.http_code,
-            data=repo_response)
+        return self.handle_response(data)
 
     def get_weather_data(self, date):
-
-        return self.weather_cache.get(date)
+        cache_data = self.weather_cache.get(date)
+        for i in cache_data:
+            print("City :" + i.city)
+        if len(cache_data) != 0:
+            return FinalResponse(
+                http_code="200",
+                data=cache_data)
+        db_data = self.weather_repo.get_all_by_date(date)
+        return FinalResponse(
+            http_code=weather_utils.get_http_code_from_db_response(db_data),
+            data=db_data)
 
     def store_in_cache(self, weather_response):
+        logger.info("Inserting into cache")
         key_date = weather_response.date
         key_city = weather_response.city
         self.weather_cache.set(str(key_date).strip(), key_city, weather_response)
@@ -54,5 +66,12 @@ class WeatherService(AbstractWeatherService):
     def get_all_data(self):
         self.weather_repo.get_all_data()
 
-    def created_status_code(self, repo_response):
-        return bool(repo_response.http_code == "201")
+    def handle_response(self, data):
+        if weather_utils.status_code_2xx(data):
+            self.store_in_cache(data)
+            return FinalResponse(
+                http_code=data.http_code,
+                data=[data])
+        return FinalResponse(
+            http_code=data.http_code,
+            data=data)

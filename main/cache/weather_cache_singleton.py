@@ -1,8 +1,6 @@
-from fastapi import Depends
-from main.cache.weather_cache import WeatherCache
 from main.cache.abstract_weather_cache import AbstractWeatherCache
+from main.cache.weather_cache import WeatherCache
 
-# Create a global instance of the cache
 weather_cache_instance = WeatherCache()
 
 

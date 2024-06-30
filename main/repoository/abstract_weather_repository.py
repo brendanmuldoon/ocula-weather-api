@@ -13,3 +13,7 @@ class AbstractWeatherRepository(ABC):
     def get_all_data(self):
         raise NotImplementedError
 
+    @abstractmethod
+    def get_all_by_date(self, date):
+        raise NotImplementedError
+
