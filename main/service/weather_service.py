@@ -7,6 +7,7 @@ from main.cache.weather_cache_singleton import get_weather_cache
 from main.client.abstract_weather_api_client import AbstractWeatherApiClient
 from main.client.weather_api_client import WeatherApiClient
 from main.entity.final_response import FinalResponse
+from main.entity.success_weather_response import SuccessResponse
 from main.repoository.abstract_weather_repository import AbstractWeatherRepository
 from main.repoository.weather_repository import WeatherRepository
 from main.service.abstract_weather_service import AbstractWeatherService
@@ -47,10 +48,7 @@ class WeatherService(AbstractWeatherService):
     def get_weather_data(self, date):
         cache_data = self.weather_cache.get(date)
         if len(cache_data) > 0:
-            logger.info("Returning data from cache")
-            return FinalResponse(
-                http_code="200",
-                data=cache_data)
+            return self.return_cache_data(cache_data)
         logger.info("Nothing in the cache for that date, going to the database")
         db_data = self.weather_repo.get_all_by_date(date)
         return FinalResponse(
@@ -67,11 +65,18 @@ class WeatherService(AbstractWeatherService):
         self.weather_repo.get_all_data()
 
     def handle_response(self, data):
-        if weather_utils.status_code_2xx(data):
+        # if weather_utils.status_code_2xx(data):
+        if isinstance(data, SuccessResponse):
             self.store_in_cache(data)
             return FinalResponse(
-                http_code=data.http_code,
+                http_code="201",
                 data=[data])
         return FinalResponse(
             http_code=data.http_code,
             data=data)
+
+    def return_cache_data(self, cache_data):
+        logger.info("Returning data from cache")
+        return FinalResponse(
+            http_code="200",
+            data=cache_data)

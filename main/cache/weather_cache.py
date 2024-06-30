@@ -1,11 +1,11 @@
 from logging.config import dictConfig
 import logging
-from multiprocessing.util import LOGGER_NAME
 
 from main.config.log_config import LogConfig
 from main.cache.abstract_weather_cache import AbstractWeatherCache
 from main.database.sqlite_database_singleton import SQLiteDatabaseSingleton
 from main.entity.success_weather_response import SuccessResponse
+from main.utils.weather_constants import LOGGER_NAME
 
 dictConfig(LogConfig().model_dump())
 logger = logging.getLogger(LOGGER_NAME)
@@ -21,10 +21,8 @@ class WeatherCache(AbstractWeatherCache):
         result = self.cache.get(date_key, {})
         success_responses = []
 
-        # Loop through the city-to-response mappings
         for city, response in result.items():
             sr = SuccessResponse(
-                http_code=response.http_code,
                 city=response.city,
                 date=response.date,
                 min_temp=response.min_temp,
@@ -51,7 +49,6 @@ class WeatherCache(AbstractWeatherCache):
             date_key = row[0]
             city_key = row[1]
             response = SuccessResponse(
-                http_code='200',
                 city=row[1],
                 date=row[0],
                 min_temp=str(row[2]),

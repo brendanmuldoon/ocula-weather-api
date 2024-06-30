@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class SuccessResponse(BaseModel):
-    http_code: Optional[str] = None
     city: Optional[str] = None
     date: Optional[str] = None
     min_temp: Optional[str] = None

@@ -64,7 +64,6 @@ def create_dto_object(open_weather_api_response):
     max_temp_formatted = f"{max_temp:.2f}"
     avg_temp_formatted = f"{avg_temp:.2f}"
     return SuccessResponse(
-        http_code=str(open_weather_api_response["cod"]),
         city=str(open_weather_api_response['name']),
         date=str(get_date_from_epoch(str(open_weather_api_response['dt']))),
         min_temp=str(min_temp_formatted),
