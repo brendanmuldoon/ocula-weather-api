@@ -6,13 +6,17 @@ from fastapi import Depends
 from main.config.log_config import LogConfig
 from main.cache.abstract_weather_cache import AbstractWeatherCache
 from main.database.abstract_database import AbstractDatabase
-from main.database.sqlite_database import SQLiteDatabase
+from main.database.sqlite_database import SQLiteDatabase, get_sqlite_database_singleton
 from main.decorator.cache_error_decorator import handle_cache_db_exceptions
 from main.entity.success_weather_response import SuccessResponse
 from main.utils.weather_constants import LOGGER_NAME
 
 dictConfig(LogConfig().model_dump())
 logger = logging.getLogger(LOGGER_NAME)
+
+
+def get_weather_cache() -> AbstractWeatherCache:
+    return WeatherCache(get_sqlite_database_singleton())
 
 
 class WeatherCache(AbstractWeatherCache):
