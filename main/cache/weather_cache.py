@@ -19,16 +19,31 @@ def get_weather_cache() -> AbstractWeatherCache:
     return WeatherCache(get_sqlite_database_singleton())
 
 
+def get_data(result):
+    data = []
+    for city, response in result.items():
+        sr = SuccessResponse(
+            city=response.city,
+            date=response.date,
+            min_temp=response.min_temp,
+            max_temp=response.max_temp,
+            avg_temp=response.avg_temp,
+            humidity=response.humidity
+        )
+        data.append(sr)
+    return data
+
+
 class WeatherCache(AbstractWeatherCache):
 
-    def __init__(self, db_singleton: AbstractDatabase = Depends(SQLiteDatabase)):
+    def __init__(self, database: AbstractDatabase = Depends(SQLiteDatabase)):
         self.cache = {}
-        self.db_singleton = db_singleton
+        self.db_singleton = database
 
     def get(self, key: str):
         date_key = key.strip()
         result = self.cache.get(date_key, {})
-        data = self.get_data(result)
+        data = get_data(result)
         return data
 
     def set(self, date_key, city_key, value):
@@ -40,20 +55,6 @@ class WeatherCache(AbstractWeatherCache):
     def load(self):
         rows = self.get_database_rows()
         self.set_rows(rows)
-
-    def get_data(self, result):
-        data = []
-        for city, response in result.items():
-            sr = SuccessResponse(
-                city=response.city,
-                date=response.date,
-                min_temp=response.min_temp,
-                max_temp=response.max_temp,
-                avg_temp=response.avg_temp,
-                humidity=response.humidity
-            )
-            data.append(sr)
-        return data
 
     def set_rows(self, rows):
         for row in rows:
