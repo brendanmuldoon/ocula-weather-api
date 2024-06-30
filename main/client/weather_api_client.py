@@ -16,7 +16,7 @@ logger = logging.getLogger(LOGGER_NAME)
 
 class WeatherApiClient(AbstractWeatherApiClient):
     def __init__(self):
-        self.base_url = "https://api.openweathermap.org/data/2.5/weather"
+        self.base_url = os.getenv("OPENWEATHER_API_URL")
         self.appid = os.getenv("OPENWEATHER_API_KEY")
 
     def get_weather(self, city: str):
