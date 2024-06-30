@@ -23,7 +23,10 @@ def valid_weather_request(city: str):
 
 
 def is_successful_weather_api_client_response(open_weather_api_response):
-    return bool(open_weather_api_response['cod'] == 200)
+    if bool(open_weather_api_response['cod'] == 200):
+        return True
+    logger.error(str(open_weather_api_response['message']))
+    return False
 
 
 def handle_error_response(message, code):

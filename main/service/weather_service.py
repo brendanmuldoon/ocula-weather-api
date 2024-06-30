@@ -34,7 +34,6 @@ class WeatherService(AbstractWeatherService):
         open_weather_api_response = self.weather_api_client.get_weather(city)
 
         if not weather_utils.is_successful_weather_api_client_response(open_weather_api_response):
-            logger.error(str(open_weather_api_response['message']))
             return weather_utils.handle_error_response(str(open_weather_api_response['message']),
                                                        str(open_weather_api_response['cod']))
 
