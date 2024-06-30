@@ -45,14 +45,16 @@ class SQLiteDatabase(AbstractDatabase):
         return weather_data
 
     def get_all(self):
-        sql = f'SELECT * FROM weather'
+        return
 
     def get_all_by_date(self, date: str):
         sql = 'SELECT * FROM weather WHERE date = ?'
         self.cursor.execute(sql, (date,))
         rows = self.cursor.fetchall()
         if not rows:
-            return ErrorResponse(error_message=f"No records found for date : {date}", http_code="404")
+            error_message = f"No records found for date : {date}"
+            logger.error(error_message)
+            return ErrorResponse(error_message=error_message, http_code="404")
 
         columns = [column[0] for column in self.cursor.description]
         results = [

@@ -45,12 +45,12 @@ class WeatherService(AbstractWeatherService):
 
     def get_weather_data(self, date):
         cache_data = self.weather_cache.get(date)
-        for i in cache_data:
-            print("City :" + i.city)
-        if len(cache_data) != 0:
+        if len(cache_data) > 0:
+            logger.info("Returning data from cache")
             return FinalResponse(
                 http_code="200",
                 data=cache_data)
+        logger.info("Nothing in the cache for that date, going to the database")
         db_data = self.weather_repo.get_all_by_date(date)
         return FinalResponse(
             http_code=weather_utils.get_http_code_from_db_response(db_data),

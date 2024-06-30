@@ -26,4 +26,5 @@ class WeatherRepository(AbstractWeatherRepository):
         self.database.get_all()
 
     def get_all_by_date(self, date):
+        logger.info("Retrieving records from database")
         return self.database.get_all_by_date(date)

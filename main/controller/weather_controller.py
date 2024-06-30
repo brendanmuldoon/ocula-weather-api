@@ -29,7 +29,6 @@ def get_weather_data(date: str = Query(..., description="The date to get weather
                      service: AbstractWeatherService = Depends(WeatherService)):
     logger.info("Received GET request with date : "+date)
     response = service.get_weather_data(date)
-    print(response)
     return JSONResponse(content=response.model_dump(),
                         status_code=int(response.http_code))
 
