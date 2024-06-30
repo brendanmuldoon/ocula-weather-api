@@ -43,8 +43,3 @@ def get_weather_data(request: Request,
     response = service.get_weather_data(date)
     return JSONResponse(content=response.model_dump(),
                         status_code=int(response.http_code))
-
-
-@router.get("/db_query", response_model_exclude_none=True)
-def get_weather_data(service: AbstractWeatherService = Depends(WeatherService)):  # delete once done
-    service.get_all_data()

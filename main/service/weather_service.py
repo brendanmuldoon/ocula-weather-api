@@ -5,7 +5,6 @@ import logging
 from main.cache.weather_cache import get_weather_cache
 from main.config.log_config import LogConfig
 from main.cache.abstract_weather_cache import AbstractWeatherCache
-# from main.cache.weather_cache_singleton import get_weather_cache
 from main.client.abstract_weather_api_client import AbstractWeatherApiClient
 from main.client.weather_api_client import WeatherApiClient
 from main.entity.final_response import FinalResponse
