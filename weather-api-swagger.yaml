@@ -4,13 +4,20 @@ info:
   description: A simple API to post and get weather data.
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8000
     description: Local development server
 paths:
-  /weather:
+  /weather/{city}:
     post:
-      summary: Submit weather data for a specific city and day
+      summary: Submit weather data for a specific city
       description: Add weather data for a city and day
+      parameters:
+        - name: city
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "New York"
       requestBody:
         required: true
         content:
@@ -18,12 +25,21 @@ paths:
             schema:
               type: object
               properties:
-                city:
-                  type: string
-                  example: "New York"
                 day:
                   type: string
                   example: "26-06-2024"
+                min-temperature:
+                  type: number
+                  example: 25.3
+                max-temperature:
+                  type: number
+                  example: 25.3
+                avg-temperature:
+                  type: number
+                  example: 25.3
+                humidity:
+                  type: number
+                  example: 84
       responses:
         '201':
           description: Weather data successfully created
@@ -55,7 +71,7 @@ paths:
                         example: 25.3
                       humidity:
                         type: number
-                        example: 84%
+                        example: 84
         '400':
           description: Invalid input
           content:
@@ -66,22 +82,17 @@ paths:
                   error:
                     type: string
                     example: "Invalid input data"
+  /weather:
     get:
-      summary: Retrieve weather data for a specific city and day
-      description: Get weather data if it exists for the specified city and day
+      summary: Retrieve weather data for a specific date
+      description: Get weather data if it exists for the specified date
       parameters:
-        - name: city
+        - name: date
           in: query
           required: true
           schema:
             type: string
-          example: "New York"
-        - name: day
-          in: query
-          required: true
-          schema:
-            type: string
-          example: "26-06-2024"
+            example: "26-06-2024"
       responses:
         '200':
           description: Weather data found
@@ -107,7 +118,7 @@ paths:
                     example: 25.3
                   humidity:
                     type: number
-                    example: 84%
+                    example: 84
         '404':
           description: Weather data not found
           content:
@@ -117,4 +128,4 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Weather data not found for the specified city and day"
+                    example: "Weather data not found for the specified date"
