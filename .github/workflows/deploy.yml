@@ -27,7 +27,7 @@ jobs:
         run: | 
           aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 586367048044.dkr.ecr.eu-west-1.amazonaws.com
 
-      - name: Build, push Docker image
+      - name: Build and push Docker image
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
             TAG=main
