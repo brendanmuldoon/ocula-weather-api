@@ -49,7 +49,7 @@ jobs:
           aws-region: eu-west-1
 
       - name: SSH to EC2 and deploy
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
