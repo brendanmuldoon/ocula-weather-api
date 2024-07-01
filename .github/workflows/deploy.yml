@@ -55,13 +55,16 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-              TAG=prod
-              HOST=${{ secrets.EC2_HOST }}
-
-            fi
-            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 586367048044.dkr.ecr.eu-west-1.amazonaws.com
-            docker pull 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            docker --version
+            
+            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ***.dkr.ecr.eu-west-1.amazonaws.com
+            docker pull ***.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+            
             docker stop my-app || true
             docker rm my-app || true
-            docker run -d --name ocula-weather-api -p 80:80 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+            
+            docker run -d --name ocula-weather-api -p 80:80 ***.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
