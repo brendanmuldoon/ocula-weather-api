@@ -62,11 +62,11 @@ jobs:
             sudo usermod -a -G docker ec2-user
             
             docker --version
-            
+
             aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 586367048044.dkr.ecr.eu-west-1.amazonaws.com
             sudo docker pull 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
             
-            sudo docker stop my-app || true
-            sudo docker rm my-app || true
+            sudo docker stop ocula-weather-api || true
+            sudo docker rm ocula-weather-api || true
             
             sudo docker run -d --name ocula-weather-api -p 80:80 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
