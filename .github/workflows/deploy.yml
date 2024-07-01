@@ -57,10 +57,9 @@ jobs:
           script: |
             if [ "${{ github.ref }}" == "refs/heads/main" ]; then
               TAG=main
-              HOST=${{ secrets.PROD_EC2_HOST }}
+              HOST=${{ secrets.EC2_HOST }}
             fi
 
-            # Install Docker
             sudo yum update -y
             sudo yum install -y docker
             sudo service docker start
