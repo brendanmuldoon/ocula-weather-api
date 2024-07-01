@@ -11,7 +11,36 @@ Resources:
     Properties:
       RepositoryName: !Ref ECRRepositoryName
 
+  MySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'Enable SSH and HTTP access'
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: '0.0.0.0/0'
+        - IpProtocol: 'tcp'
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: '0.0.0.0/0'
+
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      KeyName: 'ocula'
+      ImageId: 'ami-08ba52a61087f1bd6'
+      SecurityGroups:
+        - !Ref MySecurityGroup
+
 Outputs:
   RepositoryUri:
     Description: "URI of the newly created ECR repository"
     Value: !GetAtt [ MyECRRepository, RepositoryUri ]
+  InstanceId:
+    Description: 'InstanceId of the newly created EC2 instance'
+    Value: !Ref MyEC2Instance
+  PublicIP:
+    Description: 'Public IP address of the newly created EC2 instance'
+    Value: !GetAtt MyEC2Instance.PublicIp
