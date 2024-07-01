@@ -24,8 +24,8 @@ jobs:
           aws-region: eu-west-1
 
       - name: Login to ECR
-        run: |
-          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ***.dkr.ecr.eu-west-1.amazonaws.com
+        run: | 
+          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 586367048044.dkr.ecr.eu-west-1.amazonaws.com
 
       - name: Build and push Docker image
         run: |
@@ -33,12 +33,12 @@ jobs:
             TAG=main
           fi
           docker build -t ocula-weather-api .
-          docker tag ocula-weather-api:latest ***.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
-          docker push ***.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+          docker tag ocula-weather-api:latest 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+          docker push 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
 
   deploy:
     runs-on: ubuntu-latest
-    needs: Build
+    needs: build
 
     steps:
       - name: Configure AWS credentials
@@ -55,16 +55,18 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # Install Docker
             sudo yum update -y
             sudo yum install -y docker
             sudo service docker start
             sudo usermod -a -G docker ec2-user
+            
             docker --version
             
-            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ***.dkr.ecr.eu-west-1.amazonaws.com
-            docker pull ***.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
-
+            aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 586367048044.dkr.ecr.eu-west-1.amazonaws.com
+            docker pull 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+            
             docker stop my-app || true
             docker rm my-app || true
-
-            docker run -d --name ocula-weather-api -p 80:80 ***.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+            
+            docker run -d --name ocula-weather-api -p 80:80 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
