@@ -59,6 +59,10 @@ jobs:
               TAG=main
               HOST=${{ secrets.EC2_HOST }}
             fi
+            
+            echo "Creating .env file with GitHub secrets"
+            echo "OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}" > .env
+            echo "OPENWEATHER_API_URL=${{ secrets.OPENWEATHER_API_URL }}" >> .env
 
             sudo yum update -y
             sudo yum install -y docker
@@ -74,4 +78,4 @@ jobs:
             sudo docker stop ocula-weather-api || true
             sudo docker rm ocula-weather-api || true
             
-            sudo docker run -d --name ocula-weather-api -p 80:80 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
+            sudo docker run -d --name ocula-weather-api --env-file .env -p 80:80 586367048044.dkr.ecr.eu-west-1.amazonaws.com/ocula-weather-repo:$TAG
