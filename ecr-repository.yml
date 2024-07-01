@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ECRRepositoryName:
+    Type: String
+    Description: Name of the ECR repository
+    Default: ocula-weather-repo
+
+Resources:
+  MyECRRepository:
+    Type: 'AWS::ECR::Repository'
+    Properties:
+      RepositoryName: !Ref ECRRepositoryName
+
+Outputs:
+  RepositoryUri:
+    Description: "URI of the newly created ECR repository"
+    Value: !GetAtt [ MyECRRepository, RepositoryUri ]
