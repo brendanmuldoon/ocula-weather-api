@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:8000
     description: Local development server
+  - url: http://34.254.159.254:80/weather
+    description: Local development server
 paths:
   /weather/{city}:
     post:
@@ -17,7 +19,7 @@ paths:
           required: true
           schema:
             type: string
-            example: "New York"
+            example: "Dublin"
       responses:
         '201':
           description: Weather data successfully created
