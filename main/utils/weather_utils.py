@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import re
 import pytz
 from logging.config import dictConfig
 import logging
@@ -10,6 +10,7 @@ from main.entity.success_weather_response import SuccessResponse
 
 dictConfig(LogConfig().model_dump())
 logger = logging.getLogger("weather-api")
+
 
 def is_valid(data):
     return bool(data and data.strip())
@@ -80,3 +81,16 @@ def get_http_code_from_db_response(db_data):
 
 def status_code_2xx(data):
     return bool(data.http_code == "201") or bool(data.http_code == "200")
+
+
+def valid_weather_request_date(date):
+    pattern = r"^\d{4}-\d{2}-\d{2}$"
+    if re.match(pattern, date):
+        try:
+            datetime.strptime(date, "%Y-%m-%d")
+            return True
+        except ValueError as ex:
+            logger.error("Caught date validation error")
+            return False
+    else:
+        return False

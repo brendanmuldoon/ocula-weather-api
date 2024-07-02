@@ -47,6 +47,8 @@ class WeatherService(AbstractWeatherService):
         return self.handle_response(data)
 
     def get_weather_data(self, date):
+        if not weather_utils.valid_weather_request_date(date):
+            return weather_utils.handle_error_response("Invalid date used", "400")
         cache_data = self.weather_cache.get(date)
         if len(cache_data) > 0:
             return self.return_cache_data(cache_data)
@@ -66,7 +68,6 @@ class WeatherService(AbstractWeatherService):
         self.weather_repo.get_all_data()
 
     def handle_response(self, data):
-        # if weather_utils.status_code_2xx(data):
         if isinstance(data, SuccessResponse):
             self.store_in_cache(data)
             return FinalResponse(
